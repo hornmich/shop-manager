@@ -46,11 +46,11 @@ class MainMenuView(Frame):
         raise NextScene("StockView")
 
     def _importFromShop(self):
-        raise NextScene("StockView")
+        raise NextScene("ImportView")
     
     def _acountOrder(self):
-        raise NextScene("StockView")
+        raise NextScene("AcountOrderView")
     
     def _settings(self):
-        raise NextScene("StockView")
+        raise NextScene("SettingsView")
        
