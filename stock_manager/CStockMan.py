@@ -5,10 +5,7 @@ Created on 13. 10. 2019
 '''
 
 from asciimatics.screen import ManagedScreen
-from asciimatics.widgets import Frame, ListBox, Layout, Divider, Text, Button, TextBox, Widget,\
-    MultiColumnListBox
 from asciimatics.scene import Scene
-from asciimatics.exceptions import ResizeScreenError, NextScene, StopApplication
 
 from stock_manager.CMainMenuView import MainMenuView
 from stock_manager.CStockView import StockView
@@ -17,6 +14,7 @@ from stock_manager.CReduceStockView import ReduceStockView
 from stock_manager.CProductsDetailsView import ProductsDetailsView
 from stock_manager.CPurchaseHistoryView import PurchaseHistoryView
 from stock_manager.CSellHistoryView import SellHistoryView
+from stock_manager.CReduceHistoryView import ReduceHistoryView
 
 from time import sleep
 
@@ -35,59 +33,6 @@ class StockModel(object):
         else:
             return self.get_contact(self.current_id)
 
-
-
-
-
-    
-
-    
-class ReduceHistoryView(Frame):
-    def __init__(self, screen, model):
-        super(ReduceHistoryView, self).__init__(screen,
-                                          screen.height,
-                                          screen.width,
-                                          hover_focus=True,
-                                          can_scroll=False,
-                                          title="Historie odpisů",
-                                          reduce_cpu=True)
-        # Save off the model that accesses the contacts database.
-        self._model = model
-
-        # Create the form for displaying the list of contacts.
-        layout = Layout([100], fill_frame=True)
-        self.add_layout(layout)
-        self._list_view = MultiColumnListBox(
-            height=Widget.FILL_FRAME,
-            options=model.get_summary(),
-            columns=("33%", "33%", "33%"),
-            titles=("Datum", "Ks.", "Duvod"),
-            name="Purchases",
-            add_scroll_bar=True,
-            on_change=None,
-            on_select=None)
-        layout.add_widget(self._list_view)
-        layout.add_widget(Divider())
-        layout2 = Layout([1, 1, 1])
-        self.add_layout(layout2)
-        layout2.add_widget(Button("Zpět", self._back))
-
-        self.fix()
-
-    def reset(self):
-        # Do standard reset to clear out form, then populate with new data.
-        super(ReduceHistoryView, self).reset()
-        #self.data = self._model.get_current_contact()
-
-    def _reload_list(self, new_value=None):
-        self._list_view.options = self._model.get_summary()
-        self._list_view.value = new_value
-        
-    def _back(self):
-        self.save()
-        self._model.current_id = None
-        raise NextScene("ProductsDetails")
-    
 @ManagedScreen
 def demo(screen=None):
     model = StockModel()
