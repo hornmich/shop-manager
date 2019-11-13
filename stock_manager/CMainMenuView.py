@@ -1,7 +1,7 @@
 '''
 Created on 13. 11. 2019
 
-@author: eaton
+@author: Michal Horn <michal@apartman.cz>
 '''
 
 from asciimatics.widgets import Frame, Button, Layout
