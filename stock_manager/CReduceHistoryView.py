@@ -24,10 +24,10 @@ class ReduceHistoryView(Frame):
         self.add_layout(layout)
         self._list_view = MultiColumnListBox(
             height=Widget.FILL_FRAME,
-            options=model.get_summary(),
+            options=model.stock.get_reduce_history(),
             columns=("33%", "33%", "33%"),
             titles=("Datum", "Ks.", "Duvod"),
-            name="Purchases",
+            name="reduces",
             add_scroll_bar=True,
             on_change=None,
             on_select=None)
@@ -39,13 +39,8 @@ class ReduceHistoryView(Frame):
 
         self.fix()
 
-    def reset(self):
-        # Do standard reset to clear out form, then populate with new data.
-        super(ReduceHistoryView, self).reset()
-        #self.data = self._model.get_current_contact()
-
     def _reload_list(self, new_value=None):
-        self._list_view.options = self._model.get_summary()
+        self._list_view.options = self._model.stock.get_reduce_history()
         self._list_view.value = new_value
         
     def _back(self):

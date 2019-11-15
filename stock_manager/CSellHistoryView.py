@@ -24,7 +24,7 @@ class SellHistoryView(Frame):
         self.add_layout(layout)
         self._list_view = MultiColumnListBox(
             height=Widget.FILL_FRAME,
-            options=model.get_summary(),
+            options=model.stock.get_sell_history(), 
             columns=("50%", "50%"),
             titles=("Datum", "Ks."),
             name="Sales",
@@ -38,14 +38,9 @@ class SellHistoryView(Frame):
         layout2.add_widget(Button("Zpět", self._back))
 
         self.fix()
-
-    def reset(self):
-        # Do standard reset to clear out form, then populate with new data.
-        super(SellHistoryView, self).reset()
-        #self.data = self._model.get_current_contact()
-
+        
     def _reload_list(self, new_value=None):
-        self._list_view.options = self._model.get_summary()
+        self._list_view.options = self._model.stock.get_sell_history()
         self._list_view.value = new_value
         
     def _back(self):

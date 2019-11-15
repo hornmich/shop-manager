@@ -24,10 +24,10 @@ class PurchaseHistoryView(Frame):
         self.add_layout(layout)
         self._list_view = MultiColumnListBox(
             height=Widget.FILL_FRAME,
-            options=model.get_summary(),
+            options=model.stock.get_purchase_history(),
             columns=("25%", "25%", "25%", "25%"),
             titles=("Datum", "Ks.", "Cena", "Misto"),
-            name="Purchases",
+            name="purchases",
             add_scroll_bar=True,
             on_change=None,
             on_select=None)
@@ -39,13 +39,13 @@ class PurchaseHistoryView(Frame):
 
         self.fix()
 
-    def reset(self):
+#    def reset(self):
         # Do standard reset to clear out form, then populate with new data.
-        super(PurchaseHistoryView, self).reset()
-        #self.data = self._model.get_current_contact()
+#        super(PurchaseHistoryView, self).reset()
+#        self.data = self._model.stock.get_purchase_history()
 
     def _reload_list(self, new_value=None):
-        self._list_view.options = self._model.get_summary()
+        self._list_view.options = self._model.stock.get_purchase_history()
         self._list_view.value = new_value
         
     def _back(self):

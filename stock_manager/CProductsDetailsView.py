@@ -27,8 +27,8 @@ class ProductsDetailsView(Frame):
         self.add_layout(layout)
         self._list_view = ListBox(
             Widget.FILL_FRAME,
-            model.get_summary(),
-            name="Products",
+            model.stock.get_stock_summary(),
+            name="products",
             add_scroll_bar=True,
             on_change=self._on_pick,
             on_select=None)
@@ -47,7 +47,7 @@ class ProductsDetailsView(Frame):
     def reset(self):
         # Do standard reset to clear out form, then populate with new data.
         super(ProductsDetailsView, self).reset()
-        #self.data = self._model.get_current_contact()
+        #self.data = self._model.stock.get_stock_summary()
 
     def _on_pick(self):
         self._purchase_history_btn.disabled = self._list_view.value is None
@@ -55,24 +55,27 @@ class ProductsDetailsView(Frame):
         self._reduce_history_btn.disabled = self._list_view.value is None
 
     def _reload_list(self, new_value=None):
-        self._list_view.options = self._model.get_summary()
+        self._list_view.options = self._model.stock.get_stock_summary()
         self._list_view.value = new_value
 
     def _purchase_history(self):
-        self._model.current_id = None
+        self.save()
+        self._model.stock._current_id = self.data["products"]
+        while True:
+            print("-{0}",self.data["products"])
+            print("--{0}",self._list_view.value)
+            print("---{0}",self._model.stock._current_id)
+        
+        print(self._model.stock._current_id)
         raise NextScene("PurchaseHistory")
 
     def _sell_history(self):
-        self.save()
-        self._model.current_id = None
         raise NextScene("SellHistory")
    
     def _reduce_history(self):
-        self.save()
-        self._model.current_id = None
         raise NextScene("ReduceHistory")
         
     def _back(self):
         self.save()
-        self._model.current_id = None
+        self._model.stock._current_id = None
         raise NextScene("MainMenu")

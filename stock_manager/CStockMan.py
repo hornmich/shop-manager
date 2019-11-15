@@ -17,6 +17,9 @@ from CSellHistoryView import SellHistoryView
 from CReduceHistoryView import ReduceHistoryView
 from CImportFromEshopView import ImportFromEshopView
 
+from CDataModel import DataModel
+
+
 from time import sleep
 
 class StockModel(object):
@@ -36,7 +39,7 @@ class StockModel(object):
 
 @ManagedScreen
 def demo(screen=None):
-    model = StockModel()
+    model = DataModel()
     scenes = [
         Scene([MainMenuView(screen, None)], -1, name="MainMenu"),
         Scene([StockView(screen, model)], -1, name="StockView"),

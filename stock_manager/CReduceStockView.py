@@ -34,7 +34,7 @@ class ReduceStockView(Frame):
     def reset(self):
         # Do standard reset to clear out form, then populate with new data.
         super(ReduceStockView, self).reset()
-        self.data = self._model.get_current_item()
+        # self.data = self._model.get_current_item()
 
     def _ok(self):
         self.save()

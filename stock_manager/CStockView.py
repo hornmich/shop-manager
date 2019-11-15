@@ -36,7 +36,7 @@ class StockView(Frame):
         self.add_layout(layout)
         self._list_view = ListBox(
             Widget.FILL_FRAME,
-            model.get_summary(),
+            model.stock.get_stock_summary(),
             name="Stock",
             add_scroll_bar=True,
             on_change=self._on_pick,
@@ -66,7 +66,7 @@ class StockView(Frame):
         self._details_btn.disabled = self._list_view.value is None
 
     def _reload_list(self, new_value=None):
-        self._list_view.options = self._model.get_summary()
+        self._list_view.options = self._model.stock.get_stock_summary()
         self._list_view.value = new_value
 
     def _add(self):
