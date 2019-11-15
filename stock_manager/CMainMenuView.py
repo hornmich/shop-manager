@@ -6,6 +6,7 @@ Created on 13. 11. 2019
 
 from asciimatics.widgets import Frame, Button, Layout
 from asciimatics.exceptions import NextScene
+from asciimatics.effects import Clock
 
 
 class MainMenuView(Frame):
@@ -25,15 +26,17 @@ class MainMenuView(Frame):
                                           reduce_cpu=True)
         # Save off the model that accesses the contacts database.
         self._model = model
+        self._screen = screen
 
         # Create the form for displaying the list of contacts.
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
-        layout.add_widget(Button("Výpis skladu       ", self._listItems))
-        layout.add_widget(Button("Import dat z e-shopu   ", self._importFromShop))
-        layout.add_widget(Button("Započíst objednávku", self._acountOrder))
-        layout.add_widget(Button("Nastaveni          ", self._settings))
-        layout.add_widget(Button("Konec              ", None))
+        layout.add_widget(Button("Výpis skladu         ", self._listItems))
+        layout.add_widget(Button("Import dat z e-shopu ", self._importFromShop))
+        layout.add_widget(Button("Započíst objednávku  ", self._acountOrder))
+        layout.add_widget(Button("Nastaveni            ", self._settings))
+        layout.add_widget(Button("Konec                ", None))
+        """self._screen.add_effect(Clock(screen, 10, 10, 5))"""
 
         self.fix()
 
