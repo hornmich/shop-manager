@@ -15,6 +15,7 @@ from CProductsDetailsView import ProductsDetailsView
 from CPurchaseHistoryView import PurchaseHistoryView
 from CSellHistoryView import SellHistoryView
 from CReduceHistoryView import ReduceHistoryView
+from CImportFromEshopView import ImportFromEshopView
 
 from time import sleep
 
@@ -45,6 +46,7 @@ def demo(screen=None):
         Scene([PurchaseHistoryView(screen, model)], -1, name="PurchaseHistory"),
         Scene([SellHistoryView(screen, model)], -1, name="SellHistory"),
         Scene([ReduceHistoryView(screen, model)], -1, name="ReduceHistory"),
+        Scene([ImportFromEshopView(screen, model)], -1, name="ImportView"),
     ]
     screen.play(scenes, stop_on_resize=True, start_scene=scenes[0], allow_int=True)
 

@@ -30,7 +30,7 @@ class MainMenuView(Frame):
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
         layout.add_widget(Button("Výpis skladu       ", self._listItems))
-        layout.add_widget(Button("Import z e-shopu   ", self._importFromShop))
+        layout.add_widget(Button("Import dat z e-shopu   ", self._importFromShop))
         layout.add_widget(Button("Započíst objednávku", self._acountOrder))
         layout.add_widget(Button("Nastaveni          ", self._settings))
         layout.add_widget(Button("Konec              ", None))
