@@ -7,14 +7,14 @@ Created on 13. 10. 2019
 from asciimatics.screen import ManagedScreen
 from asciimatics.scene import Scene
 
-from stock_manager.CMainMenuView import MainMenuView
-from stock_manager.CStockView import StockView
-from stock_manager.CAddStockView import AddStockView
-from stock_manager.CReduceStockView import ReduceStockView
-from stock_manager.CProductsDetailsView import ProductsDetailsView
-from stock_manager.CPurchaseHistoryView import PurchaseHistoryView
-from stock_manager.CSellHistoryView import SellHistoryView
-from stock_manager.CReduceHistoryView import ReduceHistoryView
+from CMainMenuView import MainMenuView
+from CStockView import StockView
+from CAddStockView import AddStockView
+from CReduceStockView import ReduceStockView
+from CProductsDetailsView import ProductsDetailsView
+from CPurchaseHistoryView import PurchaseHistoryView
+from CSellHistoryView import SellHistoryView
+from CReduceHistoryView import ReduceHistoryView
 
 from time import sleep
 
