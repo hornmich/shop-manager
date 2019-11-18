@@ -12,6 +12,7 @@ class ReduceHistoryView(Frame):
         super(ReduceHistoryView, self).__init__(screen,
                                           screen.height,
                                           screen.width,
+                                          on_load=self._reload_list,
                                           hover_focus=True,
                                           can_scroll=False,
                                           title="Historie odpisů",
@@ -45,5 +46,5 @@ class ReduceHistoryView(Frame):
         
     def _back(self):
         self.save()
-        self._model.current_id = None
+        self._model.currentId = None
         raise NextScene("ProductsDetails")

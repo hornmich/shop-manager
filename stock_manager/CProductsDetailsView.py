@@ -61,14 +61,16 @@ class ProductsDetailsView(Frame):
     def _purchase_history(self):
         self.save()
         self._model.stock.currentId = self.data["products"]
-        
-        print(self._model.stock.currentId)
         raise NextScene("PurchaseHistory")
 
     def _sell_history(self):
+        self.save()
+        self._model.stock.currentId = self.data["products"]
         raise NextScene("SellHistory")
    
     def _reduce_history(self):
+        self.save()
+        self._model.stock.currentId = self.data["products"]
         raise NextScene("ReduceHistory")
         
     def _back(self):

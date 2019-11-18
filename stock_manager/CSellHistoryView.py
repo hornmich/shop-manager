@@ -12,6 +12,7 @@ class SellHistoryView(Frame):
         super(SellHistoryView, self).__init__(screen,
                                           screen.height,
                                           screen.width,
+                                          on_load=self._reload_list,
                                           hover_focus=True,
                                           can_scroll=False,
                                           title="Historie prodejů",
@@ -45,5 +46,5 @@ class SellHistoryView(Frame):
         
     def _back(self):
         self.save()
-        self._model.current_id = None
+        self._model.currentId = None
         raise NextScene("ProductsDetails")
