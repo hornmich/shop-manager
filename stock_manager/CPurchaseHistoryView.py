@@ -12,6 +12,7 @@ class PurchaseHistoryView(Frame):
         super(PurchaseHistoryView, self).__init__(screen,
                                           screen.height,
                                           screen.width,
+                                          on_load=self._reload_list,
                                           hover_focus=True,
                                           can_scroll=False,
                                           title="Historie nákupů",

@@ -60,13 +60,9 @@ class ProductsDetailsView(Frame):
 
     def _purchase_history(self):
         self.save()
-        self._model.stock._current_id = self.data["products"]
-        while True:
-            print("-{0}",self.data["products"])
-            print("--{0}",self._list_view.value)
-            print("---{0}",self._model.stock._current_id)
+        self._model.stock.currentId = self.data["products"]
         
-        print(self._model.stock._current_id)
+        print(self._model.stock.currentId)
         raise NextScene("PurchaseHistory")
 
     def _sell_history(self):
@@ -77,5 +73,5 @@ class ProductsDetailsView(Frame):
         
     def _back(self):
         self.save()
-        self._model.stock._current_id = None
+        self._model.stock.currentId = None
         raise NextScene("MainMenu")

@@ -24,7 +24,7 @@ class StockModel(object):
         
     def get_stock_summary(self):
         summary = []
-        i = 1
+        i = 0
         for item in self._items:
             rec = (item._name, i)
             summary.append(rec)
@@ -37,9 +37,9 @@ class StockModel(object):
             return [(["N/A","N/A","N/A","N/A"],1)]
         else:
             history = []
-            i = 1
+            i = 0
             for purchase in self._items[self._currentId]._purchases:
-                historyRecord = ([purchase._date, purchase._pieces, purchase._price, purchase._place], i)
+                historyRecord = ([str(purchase._date), str(purchase._pieces), str(purchase._price), str(purchase._place)], i)
                 i = i+1
                 history.append(historyRecord)
             return history
@@ -49,6 +49,19 @@ class StockModel(object):
             
     def get_reduce_history(self):
         return [(["N/A","N/A","N/A"],1)]
+    
+    @property
+    def currentId(self):
+        logging.debug('currentId getter called.')
+        logging.debug('current ID: %s ', str(self._currentId) or "None")
+        return self._currentId
+    
+    @currentId.setter
+    def currentId(self, cId):
+        logging.debug('currentId setter called.')
+        self._currentId=cId
+        logging.debug('current ID: %s ', str(self._currentId) or "None")
+        
             
             
             
