@@ -1,12 +1,97 @@
 '''
-Created on 15. 11. 2019
+Created on 27. 11. 2019
 
-@author: Michal Horn
+@author: michal
 '''
-from CPieceModel import PieceModel
-from CPurchaseHistory import ItemPurchase
-from CSalesHistory import ItemSale
-from CReducesHistory import ItemReduce
+
+class PieceModel():
+    '''
+    classdocs
+    '''
+
+
+    def __init__(self, name, price, purchases, sales, reduces):
+        '''
+        Constructor
+        '''
+        self._name=name
+        self._price=price
+        self._purchases=purchases
+        self._sales=sales
+        self._reduces=reduces
+        
+    def get_piece(self):
+        return {"name":self._name, "price":self._price, "purchases": self._purchases}
+    
+class ItemPurchase(object):
+    '''
+    classdocs
+    '''
+
+
+    def __init__(self, date, pieces, price, place):
+        '''
+        Constructor
+        '''
+        
+        self._date = date
+        self._pieces = pieces
+        self._price = price
+        self._place = place
+        
+    def get_item_history(self):
+        return {"date":self._date, "pieces":self._pieces, "price":self._price, "place":self._place}
+        
+class ItemReduce(object):
+    '''
+    classdocs
+    '''
+
+
+    def __init__(self, date, pieces, reason):
+        '''
+        Constructor
+        '''
+        
+        self._date = date
+        self._pieces = pieces
+        self._reason = reason
+        
+    def get_item_history(self):
+        return {"date":self._date, "pieces":self._pieces, "reason":self._reason}
+        
+class ItemSale(object):
+    '''
+    classdocs
+    '''
+
+
+    def __init__(self, date, pieces):
+        '''
+        Constructor
+        '''
+        
+        self._date = date
+        self._pieces = pieces
+        
+    def get_item_history(self):
+        return {"date":self._date, "pieces":self._pieces}
+        
+class SettingsModel():
+    '''
+    classdocs
+    '''
+
+    def __init__(self):
+        '''
+        Constructor
+        '''
+        self._feedUrl = "http://somefeedurl.com"
+        self._margin = 15
+        
+        
+    def get_settings(self):
+        return {"feedUrl": self._feedUrl, "margin": self._margin}
 
 class StockModel(object):
     '''
@@ -93,4 +178,12 @@ class StockModel(object):
         
             
             
-            
+               
+
+        
+
+class DataModel():
+    def __init__(self):
+        self.settings = SettingsModel()
+        self.stock=StockModel()
+        
