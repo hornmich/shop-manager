@@ -227,7 +227,7 @@ class ImportFromEshopView(Frame):
     
     def _back(self):
         self.save()
-        self._model.current_id = None
+        self._model.currentId = None
         raise NextScene("MainMenu")
   
 class ProductsDetailsView(Frame):
@@ -345,7 +345,7 @@ class PurchaseHistoryView(Frame):
         
     def _back(self):
         self.save()
-        self._model.current_id = None
+        self._model.currentId = None
         raise NextScene("ProductsDetails")
   
 class ReduceHistoryView(Frame):
