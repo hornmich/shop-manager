@@ -88,7 +88,7 @@ class AddStockView(Frame):
 
     def _ok(self):
         self.save()
-        # self._model.update_current_contact(self.data)
+        self._model.stock.add_purchased_item(self.data['count'], self.data['price'], self.data['shop'])
         raise NextScene("StockView")
 
     @staticmethod

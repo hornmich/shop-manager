@@ -3,6 +3,7 @@ Created on 27. 11. 2019
 
 @author: michal
 '''
+from _datetime import datetime
 
 class PieceModel():
     '''
@@ -22,6 +23,10 @@ class PieceModel():
         
     def get_piece(self):
         return {"name":self._name, "price":self._price, "purchases": self._purchases}
+    
+    def add_purchase(self, count, price, shop):
+        purchase = ItemPurchase(datetime.today(), count, price, shop)
+        self._purchases.append(purchase)
     
 class ItemPurchase(object):
     '''
@@ -167,6 +172,12 @@ class StockModel(object):
                 i = i+1
                 history.append(historyRecord)
             return history
+        
+    def add_purchased_item(self, count, price, shop):
+        if self.currentId is None:
+            return
+        
+        self._items[self.currentId].add_purchase(count, price, shop)
     
     @property
     def currentId(self):
@@ -175,12 +186,6 @@ class StockModel(object):
     @currentId.setter
     def currentId(self, cId):
         self._currentId=cId
-        
-            
-            
-               
-
-        
 
 class DataModel():
     def __init__(self):
