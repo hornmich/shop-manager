@@ -1,3 +1,3 @@
-import stock_manager.CStockMan
+import stock_manager.application
 
-stock_manager.CStockMan.demo()
+stock_manager.application.demo()
