@@ -31,7 +31,7 @@ class PieceModel():
     def reduce_item(self, count, reason):
         reduce = ItemReduce(datetime.today(), count, reason)
         self._reduces.append(reduce)
-    
+      
 class ItemPurchase(object):
     '''
     classdocs
@@ -131,6 +131,8 @@ class StockModel(object):
                        )
             ]
         
+        self._deleted=[]
+        
     def get_stock_summary(self):
         summary = []
         i = 0
@@ -188,6 +190,13 @@ class StockModel(object):
             return
         
         self._items[self.currentId].reduce_item(count, reason)
+
+    def delete_item(self):
+        if self.currentId is None:
+            return
+        
+        self._deleted.append(self._items[self.currentId])
+        self._items.remove(self._items[self.currentId])
     
     @property
     def currentId(self):

@@ -135,7 +135,12 @@ class StockView(Frame):
     
     def _delete(self):
         self.save()
-        #self._model.delete_contact(self.data["contacts"])
+        self._model.stock.currentId = self.data["products"]
+        self._scene.add_effect(PopUpDialog(self._screen, "Opravdu smazat?.", ["Ano", "Ne"], self._delete_on_close, True, u'warning'))
+        
+    def _delete_on_close(self, selected):
+        if selected == 0:
+            self._model.stock.delete_item()
         self._reload_list()
         
     def _back(self):
@@ -255,6 +260,7 @@ class ProductsDetailsView(Frame):
         layout2.add_widget(Button("Zpět", self._back), 3)
 
         self.fix()
+        self._reload_list()
         self._on_pick()
 
     def reset(self):
