@@ -48,7 +48,7 @@ class MainMenuView(Frame):
         raise NextScene("StockView")
 
     def _importFromShop(self):
-        raise NextScene("ImportView")
+        raise NextScene("LoadFeed")
     
     def _acountOrder(self):
         raise NextScene("AcountOrderView")
@@ -428,7 +428,7 @@ class SellHistoryView(Frame):
         self._model.currentId = None
         raise NextScene("ProductsDetails")
     
-class ImportFromEshopView(Frame):
+class LoadFeedView(Frame):
     '''
     classdocs
     '''
@@ -436,12 +436,12 @@ class ImportFromEshopView(Frame):
         '''
         Constructor
         '''
-        super(ImportFromEshopView, self).__init__(screen,
-                                          10,
+        super(LoadFeedView, self).__init__(screen,
+                                          5,
                                           60,
                                           hover_focus=True,
                                           can_scroll=False,
-                                          title="Import profuktu",
+                                          title="Nahrat XML feed",
                                           reduce_cpu=True)
         # Save off the model that accesses the contacts database.
         self._model = model
@@ -451,10 +451,6 @@ class ImportFromEshopView(Frame):
         layout = Layout([2], fill_frame=True)
         self.add_layout(layout)
         layout.add_widget(Text("Adresa XML:", "xmlUrl"))
-        layout.add_widget(Label(""))
-        layout.add_widget(CheckBox("Smazat vsechny chybejici.", "Smazat vsechny", "deleteAll"))
-        layout.add_widget(CheckBox("Pridat vsechny nove (0 na sklade).", "Pridat vsechny", "addAll"))
-        layout.add_widget(CheckBox("Jen zobrazit zmeny.", "Zobrazit zmeny", "dryRun"))
         layout.add_widget(Divider())
         layout2=Layout([1,1])
         self.add_layout(layout2)
@@ -465,7 +461,7 @@ class ImportFromEshopView(Frame):
 
     def reset(self):
         # Do standard reset to clear out form, then populate with new data.
-        super(ImportFromEshopView, self).reset()
+        super(LoadFeedView, self).reset()
         #self.data = self._model.get_current_contact()
 
     def _load(self):
