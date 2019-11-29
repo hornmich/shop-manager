@@ -182,54 +182,44 @@ class AddStockView(Frame):
     def _cancel():
         raise NextScene("StockView")
 
-class ImportFromEshopView(Frame):
-    '''
-    classdocs
-    '''
+class ReduceStockView(Frame):
     def __init__(self, screen, model):
-        '''
-        Constructor
-        '''
-        super(ImportFromEshopView, self).__init__(screen,
-                                          10,
+        super(ReduceStockView, self).__init__(screen,
+                                          6,
                                           60,
                                           hover_focus=True,
                                           can_scroll=False,
-                                          title="Import profuktu",
+                                          title="Odepsat zboží",
                                           reduce_cpu=True)
         # Save off the model that accesses the contacts database.
         self._model = model
-        self._screen = screen
 
         # Create the form for displaying the list of contacts.
-        layout = Layout([2], fill_frame=True)
+        layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
-        layout.add_widget(Text("Adresa XML:", "xmlUrl"))
-        layout.add_widget(Label(""))
-        layout.add_widget(CheckBox("Smazat vsechny chybejici.", "Smazat vsechny", "deleteAll"))
-        layout.add_widget(CheckBox("Pridat vsechny nove (0 na sklade).", "Pridat vsechny", "addAll"))
-        layout.add_widget(CheckBox("Jen zobrazit zmeny.", "Zobrazit zmeny", "dryRun"))
+        layout.add_widget(Text("Počet kusů:", "count"))
+        layout.add_widget(Text("Důvod:", "reason"))
         layout.add_widget(Divider())
-        layout2=Layout([1,1])
+        layout2 = Layout([1, 1])
         self.add_layout(layout2)
-        layout2.add_widget(Button("Nacist", self._load), 0)
-        layout2.add_widget(Button("Zpet", self._back), 1)
-
+        layout2.add_widget(Button("OK", self._ok), 0)
+        layout2.add_widget(Button("Cancel", self._cancel), 1)
         self.fix()
 
     def reset(self):
         # Do standard reset to clear out form, then populate with new data.
-        super(ImportFromEshopView, self).reset()
-        #self.data = self._model.get_current_contact()
+        super(ReduceStockView, self).reset()
+        # self.data = self._model.get_current_item()
 
-    def _load(self):
-        self._scene.add_effect(PopUpDialog(self._screen, "Nelze nacist.", ["OK"], None, True, u'warning'))
-    
-    def _back(self):
+    def _ok(self):
         self.save()
-        self._model.currentId = None
-        raise NextScene("MainMenu")
-  
+        self._model.stock.reduce_item(self.data['count'], self.data['reason'])
+        raise NextScene("StockView")
+
+    @staticmethod
+    def _cancel():
+        raise NextScene("StockView")
+
 class ProductsDetailsView(Frame):
     def __init__(self, screen, model):
         super(ProductsDetailsView, self).__init__(screen,
@@ -390,44 +380,6 @@ class ReduceHistoryView(Frame):
         self._model.currentId = None
         raise NextScene("ProductsDetails")
 
-class ReduceStockView(Frame):
-    def __init__(self, screen, model):
-        super(ReduceStockView, self).__init__(screen,
-                                          6,
-                                          60,
-                                          hover_focus=True,
-                                          can_scroll=False,
-                                          title="Odepsat zboží",
-                                          reduce_cpu=True)
-        # Save off the model that accesses the contacts database.
-        self._model = model
-
-        # Create the form for displaying the list of contacts.
-        layout = Layout([100], fill_frame=True)
-        self.add_layout(layout)
-        layout.add_widget(Text("Počet kusů:", "count"))
-        layout.add_widget(Text("Důvod:", "reason"))
-        layout.add_widget(Divider())
-        layout2 = Layout([1, 1])
-        self.add_layout(layout2)
-        layout2.add_widget(Button("OK", self._ok), 0)
-        layout2.add_widget(Button("Cancel", self._cancel), 1)
-        self.fix()
-
-    def reset(self):
-        # Do standard reset to clear out form, then populate with new data.
-        super(ReduceStockView, self).reset()
-        # self.data = self._model.get_current_item()
-
-    def _ok(self):
-        self.save()
-        self._model.stock.reduce_item(self.data['count'], self.data['reason'])
-        raise NextScene("StockView")
-
-    @staticmethod
-    def _cancel():
-        raise NextScene("StockView")
-
 class SellHistoryView(Frame):
     def __init__(self, screen, model):
         super(SellHistoryView, self).__init__(screen,
@@ -470,3 +422,50 @@ class SellHistoryView(Frame):
         self._model.currentId = None
         raise NextScene("ProductsDetails")
     
+class ImportFromEshopView(Frame):
+    '''
+    classdocs
+    '''
+    def __init__(self, screen, model):
+        '''
+        Constructor
+        '''
+        super(ImportFromEshopView, self).__init__(screen,
+                                          10,
+                                          60,
+                                          hover_focus=True,
+                                          can_scroll=False,
+                                          title="Import profuktu",
+                                          reduce_cpu=True)
+        # Save off the model that accesses the contacts database.
+        self._model = model
+        self._screen = screen
+
+        # Create the form for displaying the list of contacts.
+        layout = Layout([2], fill_frame=True)
+        self.add_layout(layout)
+        layout.add_widget(Text("Adresa XML:", "xmlUrl"))
+        layout.add_widget(Label(""))
+        layout.add_widget(CheckBox("Smazat vsechny chybejici.", "Smazat vsechny", "deleteAll"))
+        layout.add_widget(CheckBox("Pridat vsechny nove (0 na sklade).", "Pridat vsechny", "addAll"))
+        layout.add_widget(CheckBox("Jen zobrazit zmeny.", "Zobrazit zmeny", "dryRun"))
+        layout.add_widget(Divider())
+        layout2=Layout([1,1])
+        self.add_layout(layout2)
+        layout2.add_widget(Button("Nacist", self._load), 0)
+        layout2.add_widget(Button("Zpet", self._back), 1)
+
+        self.fix()
+
+    def reset(self):
+        # Do standard reset to clear out form, then populate with new data.
+        super(ImportFromEshopView, self).reset()
+        #self.data = self._model.get_current_contact()
+
+    def _load(self):
+        self._scene.add_effect(PopUpDialog(self._screen, "Nelze nacist.", ["OK"], None, True, u'warning'))
+    
+    def _back(self):
+        self.save()
+        self._model.currentId = None
+        raise NextScene("MainMenu")
