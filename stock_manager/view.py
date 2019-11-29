@@ -125,7 +125,7 @@ class StockView(Frame):
 
     def _account(self):
         self.save()
-        self._model.currentId = None
+        self._model.stock.currentId = self.data["products"]
         raise NextScene("ReduceStock")
    
     def _details(self):
@@ -406,7 +406,7 @@ class ReduceStockView(Frame):
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
         layout.add_widget(Text("Počet kusů:", "count"))
-        layout.add_widget(Text("Důvod:", "shop"))
+        layout.add_widget(Text("Důvod:", "reason"))
         layout.add_widget(Divider())
         layout2 = Layout([1, 1])
         self.add_layout(layout2)
@@ -421,7 +421,7 @@ class ReduceStockView(Frame):
 
     def _ok(self):
         self.save()
-        # self._model.update_current_contact(self.data)
+        self._model.stock.reduce_item(self.data['count'], self.data['reason'])
         raise NextScene("StockView")
 
     @staticmethod

@@ -28,6 +28,10 @@ class PieceModel():
         purchase = ItemPurchase(datetime.today(), count, price, shop)
         self._purchases.append(purchase)
     
+    def reduce_item(self, count, reason):
+        reduce = ItemReduce(datetime.today(), count, reason)
+        self._reduces.append(reduce)
+    
 class ItemPurchase(object):
     '''
     classdocs
@@ -178,6 +182,12 @@ class StockModel(object):
             return
         
         self._items[self.currentId].add_purchase(count, price, shop)
+
+    def reduce_item(self, count, reason):
+        if self.currentId is None:
+            return
+        
+        self._items[self.currentId].reduce_item(count, reason)
     
     @property
     def currentId(self):
