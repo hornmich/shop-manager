@@ -465,9 +465,73 @@ class LoadFeedView(Frame):
         #self.data = self._model.get_current_contact()
 
     def _load(self):
-        self._scene.add_effect(PopUpDialog(self._screen, "Nelze nacist.", ["OK"], None, True, u'warning'))
+        raise NextScene("ProcessFeed")
     
     def _back(self):
         self.save()
         self._model.currentId = None
+        raise NextScene("MainMenu")
+    
+class ProcessXMLFeedView(Frame):
+    def __init__(self, screen, model):
+        super(ProcessXMLFeedView, self).__init__(screen,
+                                          screen.height,
+                                          screen.width,
+                                          on_load=self._reload_list,
+                                          hover_focus=True,
+                                          can_scroll=False,
+                                          title="Aplikovat zmeny",
+                                          reduce_cpu=True)
+        # Save off the model that accesses the contacts database.
+        self._model = model
+
+        # Create the form for displaying the list of contacts.
+        layout = Layout([100], fill_frame=True)
+        self.add_layout(layout)
+        self._list_view = MultiColumnListBox(
+            height=Widget.FILL_FRAME,
+            options=model.xmlFeed.get_actions(), 
+            columns=("50%", "50%"),
+            titles=("Produkt", "Akce"),
+            name="actions",
+            add_scroll_bar=True,
+            on_change=None,
+            on_select=self._on_select)
+        layout.add_widget(self._list_view)
+        layout.add_widget(Divider())
+        layout2 = Layout([1, 1])
+        self.add_layout(layout2)
+        layout2.add_widget(Button("Aplikovat vse", self._apply_all), 0)
+        layout2.add_widget(Button("Zpět", self._back), 1)
+
+
+        self.fix()
+        
+    def _reload_list(self, new_value=None):
+        self._list_view.options = self._model.xmlFeed.get_actions()
+        self._list_view.value = new_value
+        
+    def _on_select(self):
+        self.save()
+        self._model.xmlFeed.currentActionId = self.data['actions']
+        self._scene.add_effect(PopUpDialog(self._screen, "Co se ma stat?.", ["Provest", "Ignorovat", "Zpet"], self._on_action_selected, True, u'green'))
+
+    def _on_action_selected(self, action):
+        if action == 0:
+            self._model.xmlFeed.apply_selected()
+            self._reload_list()
+        elif action == 1:
+            self._model.xmlFeed.ignore_selected()
+            self._reload_list()
+        else :
+            return
+    def _apply_all(self):
+        self.save()
+        self._model.xmlFeed.currentActionId = None
+        self._model.xmlFeed.apply_all()    
+        self._scene.add_effect(PopUpDialog(self._screen, "Vsechy polozky se aktualizovaly.", ["OK"], None, True, u'green'))
+
+    def _back(self):
+        self.save()
+        self._model.xmlFeed.currentActionId = None
         raise NextScene("MainMenu")

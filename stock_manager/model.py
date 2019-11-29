@@ -205,9 +205,39 @@ class StockModel(object):
     @currentId.setter
     def currentId(self, cId):
         self._currentId=cId
+        
+class HeurekaFeedModel():
+    def __init__(self):
+        self._currentActionId=None
+        pass
+    
+    def get_actions(self):
+        return [(["Plenky1","Pridat"],1),
+                (["Plenky2","Odebrat"],2),
+                (["Plenky3","Odebrat"],3),
+                (["Plenky4","Pridat"],4),
+                ]
+    
+    def apply_selected(self):
+        pass
+    
+    def ignore_selected(self):
+        pass
+    
+    def apply_all(self):
+        pass
+    
+    @property
+    def currentActionId(self):
+        return self._currentActionId
+    
+    @currentActionId.setter
+    def currentActionId(self, cId):
+        self._currentActionId=cId
 
 class DataModel():
     def __init__(self):
         self.settings = SettingsModel()
         self.stock=StockModel()
+        self.xmlFeed=HeurekaFeedModel()
         
