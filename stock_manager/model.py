@@ -198,6 +198,13 @@ class StockModel(object):
     def add_item(self, name, price):
         self._items.append(PieceModel(name, price, [], [], []))
         logger.debug("_items: %s", str(self._items))
+        
+    def delete_by_name(self, name):
+        idx = 0
+        for item in self._items:
+            if item._name is name:
+                del(self._items[idx])
+            idx = idx+1
 
     def reduce_item(self, count, reason):
         if self.currentId is None:
