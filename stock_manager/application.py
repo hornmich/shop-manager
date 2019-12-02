@@ -12,6 +12,7 @@ from stock_manager.model import DataModel
 
 
 from time import sleep
+from stock_manager.loaders import HeurekaXMLLoader
 
 class StockModel(object):
     def __init__(self):

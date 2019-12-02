@@ -6,7 +6,6 @@ Created on 27. 11. 2019
 
 from asciimatics.widgets import Frame, Button, Layout, MultiColumnListBox, Widget, Divider, Text, Label, CheckBox, PopUpDialog, ListBox
 from asciimatics.exceptions import NextScene
-from apport.crashdb import URLError
 
 
 class MainMenuView(Frame):
@@ -103,11 +102,12 @@ class StockView(Frame):
 
         self.fix()
         self._on_pick()
+        self.reset()
 
     def reset(self):
         # Do standard reset to clear out form, then populate with new data.
         super(StockView, self).reset()
-        #self.data = self._model.get_current_contact()
+        self._reload_list()
 
     def _on_pick(self):
         self._delete_btn.disabled = self._list_view.value is None
@@ -458,6 +458,7 @@ class LoadFeedView(Frame):
         layout2.add_widget(Button("Nacist", self._load), 0)
         layout2.add_widget(Button("Zpet", self._back), 1)
 
+        self.reset()
         self.fix()
 
     def reset(self):

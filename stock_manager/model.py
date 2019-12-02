@@ -5,6 +5,9 @@ Created on 27. 11. 2019
 '''
 from _datetime import datetime
 from stock_manager.loaders import HeurekaXMLLoader
+import logging
+from asciimatics.screen import logger
+from cupshelpers.cupshelpers import activateNewPrinter
 
 class PieceModel():
     '''
@@ -144,6 +147,12 @@ class StockModel(object):
             
         return summary
     
+    def get_products_names(self):
+        names = []
+        for item in self._items:
+            names.append(item._name)
+        return frozenset(names)
+    
     def get_purchase_history(self):
         if self._currentId is None:
             return [(["N/A","N/A","N/A","N/A"],1)]
@@ -185,6 +194,10 @@ class StockModel(object):
             return
         
         self._items[self.currentId].add_purchase(count, price, shop)
+        
+    def add_item(self, name, price):
+        self._items.append(PieceModel(name, price, [], [], []))
+        logger.debug("_items: %s", str(self._items))
 
     def reduce_item(self, count, reason):
         if self.currentId is None:
@@ -213,22 +226,67 @@ class HeurekaFeedModel():
         self._feedLoader = feedLoader
         self._stock = stock
         self._actions = []
+        logging.basicConfig(filename='./app.log', filemode='w', level=logging.DEBUG, format='%(name)s - %(levelname)s - %(message)s')
+
+            
+    def load(self, url):
+        self._actions = []
+        shop_products = self._feedLoader.get_products_names(url=url)    
+        index=0
+        current_products = self._stock.get_products_names()
+        for add_product in (shop_products-current_products) :
+            action = ([add_product, 'Pridat'], index)
+            index = index+1
+            self._actions.append(action)
+        for remove_product in (current_products-shop_products) :
+            action = ([remove_product, 'Odebrat'], index)
+            index = index+1
+            self._actions.append(action)
     
     def get_actions(self):
-        return [(["Plenky1","Pridat"],1),
-                (["Plenky2","Odebrat"],2),
-                (["Plenky3","Odebrat"],3),
-                (["Plenky4","Pridat"],4),
-                ]
+        return self._actions
+    
+    def find_selected_action_index(self):
+        index = 0
+        for action in self._actions:
+            if action[1] is self._currentActionId:
+                return index
+            index = index+1
+        return None
     
     def apply_selected(self):
-        pass
+        if self._currentActionId is None:
+            return
+        
+        idx = self.find_selected_action_index()
+        if idx is None:
+            return
+        
+        if (self._actions[idx][0][1] is "Odebrat"):
+            logging.debug('Odebirani produktu id %d', self._currentActionId)
+            self._stock.delete_by_name(self._actions[idx][0][0])
+            del(self._actions[idx])
+        elif (self._actions[idx][0][1] is "Pridat"):
+            logging.debug('Pridavani produktu id %d', self._currentActionId)
+            self._stock.add_item(self._actions[idx][0][0], price=10)
+            del(self._actions[idx])
+                
+        logging.debug('Akce id %d typ %s', self._currentActionId, str(self._actions))
     
     def ignore_selected(self):
-        pass
-    
+        if self._currentActionId is None:
+            return
+        
+        idx = self.find_selected_action_index()
+        if idx is None:
+            return
+        
+        del(self._actions[idx])
+            
     def apply_all(self):
-        pass
+        for action in self._actions:
+            self._currentActionId = action[1]
+            self.apply_selected()
     
     @property
     def currentActionId(self):
@@ -239,8 +297,8 @@ class HeurekaFeedModel():
         self._currentActionId=cId
 
 class DataModel():
-    def __init__(self):
+    def __init__(self, feedLoader):
         self.settings = SettingsModel()
         self.stock=StockModel()
-        self.xmlFeed=HeurekaFeedModel()
+        self.xmlFeed=HeurekaFeedModel(feedLoader, self.stock)
         
