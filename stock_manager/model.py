@@ -291,8 +291,10 @@ class HeurekaFeedModel():
         del(self._actions[idx])
             
     def apply_all(self):
-        for action in self._actions:
-            self._currentActionId = action[1]
+        logger.debug("actions %s", self._actions)
+        
+        while len(self._actions) > 0:
+            self._currentActionId = self._actions[0][1]
             self.apply_selected()
     
     @property
