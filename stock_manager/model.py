@@ -4,6 +4,7 @@ Created on 27. 11. 2019
 @author: michal
 '''
 from _datetime import datetime
+from stock_manager.loaders import HeurekaXMLLoader
 
 class PieceModel():
     '''
@@ -207,9 +208,11 @@ class StockModel(object):
         self._currentId=cId
         
 class HeurekaFeedModel():
-    def __init__(self):
+    def __init__(self, feedLoader, stock):
         self._currentActionId=None
-        pass
+        self._feedLoader = feedLoader
+        self._stock = stock
+        self._actions = []
     
     def get_actions(self):
         return [(["Plenky1","Pridat"],1),

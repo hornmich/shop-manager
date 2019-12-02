@@ -6,6 +6,7 @@ Created on 27. 11. 2019
 
 from asciimatics.widgets import Frame, Button, Layout, MultiColumnListBox, Widget, Divider, Text, Label, CheckBox, PopUpDialog, ListBox
 from asciimatics.exceptions import NextScene
+from apport.crashdb import URLError
 
 
 class MainMenuView(Frame):
@@ -465,7 +466,16 @@ class LoadFeedView(Frame):
         #self.data = self._model.get_current_contact()
 
     def _load(self):
-        raise NextScene("ProcessFeed")
+        self.save()
+        try:
+            self._model.xmlFeed.load(url=self.data["xmlUrl"])
+        except Exception as e:
+            self._scene.add_effect(PopUpDialog(self._screen, "Nelze nacist: "+str(e), ["OK"], self._on_error, True, u'warning'))
+        else:
+            raise NextScene("ProcessFeed")
+
+    def _on_error(self, btn):
+        raise NextScene("MainMenu")        
     
     def _back(self):
         self.save()

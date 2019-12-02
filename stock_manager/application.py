@@ -30,7 +30,8 @@ class StockModel(object):
 
 @ManagedScreen
 def demo(screen=None):
-    model = DataModel()
+    xmlLoader = HeurekaXMLLoader()
+    model = DataModel(xmlLoader)
     scenes = [
         Scene([MainMenuView(screen, None)], -1, name="MainMenu"),
         Scene([StockView(screen, model)], -1, name="StockView"),
