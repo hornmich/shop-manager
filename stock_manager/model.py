@@ -304,10 +304,40 @@ class HeurekaFeedModel():
     @currentActionId.setter
     def currentActionId(self, cId):
         self._currentActionId=cId
+        
+class EshopOrdersModel(object):
+    def __init__(self, orderLoader):
+        self._currentActionId=None
+        self._orderLoader = orderLoader
+        self._orders = []
+        logging.basicConfig(filename='./app.log', filemode='w', level=logging.DEBUG, format='%(name)s - %(levelname)s - %(message)s')
+    
+    def load(self, url):
+        self._orders = []
+        shop_orders = self._orderLoader.get_orders(url=url) 
+        index = 0
+        for order in shop_orders:
+            current_order = ([order['id'], order['date'], order['state'], order['price']], index)
+            self._orders.append(current_order)
+      
+    def get_orders(self):
+        return self._orders
+    
+    def apply_selected(self):
+        pass
+    
+    def ignore_selected(self):
+        pass
+    
+    def apply_all(self):
+        while len(self._actions) > 0:
+            self._currentActionId = self._actions[0][1]
+            self.apply_selected()
 
 class DataModel():
-    def __init__(self, feedLoader):
+    def __init__(self, feedLoader, orderLoader):
         self.settings = SettingsModel()
         self.stock=StockModel()
         self.xmlFeed=HeurekaFeedModel(feedLoader, self.stock)
+        self.orders=EshopOrdersModel(orderLoader)
         

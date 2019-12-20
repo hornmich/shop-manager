@@ -51,7 +51,7 @@ class MainMenuView(Frame):
         raise NextScene("LoadFeed")
     
     def _acountOrder(self):
-        raise NextScene("AcountOrderView")
+        raise NextScene("LoadOrders")
     
     def _settings(self):
         raise NextScene("SettingsView")
@@ -546,3 +546,122 @@ class ProcessXMLFeedView(Frame):
         self.save()
         self._model.xmlFeed.currentActionId = None
         raise NextScene("MainMenu")
+
+class LoadOrdersView(Frame):
+    '''
+    classdocs
+    '''
+    def __init__(self, screen, model):
+        '''
+        Constructor
+        '''
+        super(LoadOrdersView, self).__init__(screen,
+                                          5,
+                                          60,
+                                          hover_focus=True,
+                                          can_scroll=False,
+                                          title="Importovat objednavky",
+                                          reduce_cpu=True)
+        # Save off the model that accesses the contacts database.
+        self._model = model
+        self._screen = screen
+
+        # Create the form for displaying the list of contacts.
+        layout = Layout([2], fill_frame=True)
+        self.add_layout(layout)
+        layout.add_widget(Text("Adresa XML:", "xmlUrl"))
+        layout.add_widget(Divider())
+        layout2=Layout([1,1])
+        self.add_layout(layout2)
+        layout2.add_widget(Button("Nacist", self._load), 0)
+        layout2.add_widget(Button("Zpet", self._back), 1)
+
+        self.reset()
+        self.fix()
+
+    def reset(self):
+        # Do standard reset to clear out form, then populate with new data.
+        super(LoadOrdersView, self).reset()
+        #self.data = self._model.get_current_contact()
+
+    def _load(self):
+        self.save()
+        try:
+            self._model.orders.load(url=self.data["xmlUrl"])
+        except Exception as e:
+            self._scene.add_effect(PopUpDialog(self._screen, "Nelze nacist: "+str(e), ["OK"], self._on_error, True, u'warning'))
+        else:
+            raise NextScene("ProcessOrders")
+
+    def _on_error(self, btn):
+        raise NextScene("MainMenu")        
+    
+    def _back(self):
+        self.save()
+        self._model.currentId = None
+        raise NextScene("MainMenu")
+    
+class ProcessOrdersView(Frame):
+    def __init__(self, screen, model):
+        super(ProcessOrdersView, self).__init__(screen,
+                                          screen.height,
+                                          screen.width,
+                                          on_load=self._reload_list,
+                                          hover_focus=True,
+                                          can_scroll=False,
+                                          title="Zauctovat objednavky",
+                                          reduce_cpu=True)
+        # Save off the model that accesses the contacts database.
+        self._model = model
+
+        # Create the form for displaying the list of contacts.
+        layout = Layout([100], fill_frame=True)
+        self.add_layout(layout)
+        self._list_view = MultiColumnListBox(
+            height=Widget.FILL_FRAME,
+            options=model.orders.get_orders(), 
+            columns=("25%", "25%", "25%", "25%"),
+            titles=("ID", "Datum", "Stav", "Celkova cena"),
+            name="actions",
+            add_scroll_bar=True,
+            on_change=None,
+            on_select=self._on_select)
+        layout.add_widget(self._list_view)
+        layout.add_widget(Divider())
+        layout2 = Layout([1, 1, 1])
+        self.add_layout(layout2)
+        layout2.add_widget(Button("Zauctovat vse", self._apply_all), 0)
+        layout2.add_widget(Button("Zpět", self._back), 1)
+
+        self.fix()
+        
+    def _reload_list(self, new_value=None):
+        self._list_view.options = self._model.orders.get_orders()
+        self._list_view.value = new_value
+        
+    def _on_select(self):
+        self.save()
+        self._model.orders.currentActionId = self.data['actions']
+        self._scene.add_effect(PopUpDialog(self._screen, "Co se ma stat?.", ["Zauctovat", "Ignorovat", "Detaily", "Zpet"], self._on_action_selected, True, u'green'))
+
+    def _on_action_selected(self, action):
+        if action == 0:
+            self._model.orders.apply_selected()
+            self._reload_list()
+        elif action == 1:
+            self._model.orders.ignore_selected()
+            self._reload_list()
+        else :
+            return
+
+    def _apply_all(self):
+        self.save()
+        self._model.orders.currentActionId = None
+        self._model.orders.apply_all()    
+        self._scene.add_effect(PopUpDialog(self._screen, "Vsechy objednavky zauctovany.", ["OK"], None, True, u'green'))
+
+    def _back(self):
+        self.save()
+        self._model.orders.currentActionId = None
+        raise NextScene("MainMenu")    
+    

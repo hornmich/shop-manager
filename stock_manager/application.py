@@ -7,12 +7,12 @@ Created on 13. 10. 2019
 from asciimatics.screen import ManagedScreen
 from asciimatics.scene import Scene
 
-from stock_manager.view import MainMenuView, StockView, AddStockView, ReduceStockView, ProductsDetailsView, PurchaseHistoryView, SellHistoryView, ReduceHistoryView, LoadFeedView, ProcessXMLFeedView 
+from stock_manager.view import MainMenuView, StockView, AddStockView, ReduceStockView, ProductsDetailsView, PurchaseHistoryView, SellHistoryView, ReduceHistoryView, LoadFeedView, ProcessXMLFeedView, LoadOrdersView, ProcessOrdersView 
 from stock_manager.model import DataModel
 
 
 from time import sleep
-from stock_manager.loaders import HeurekaXMLLoader
+from stock_manager.loaders import HeurekaXMLLoader, EshopRychleOrdersLoader
 
 class StockModel(object):
     def __init__(self):
@@ -32,9 +32,12 @@ class StockModel(object):
 @ManagedScreen
 def demo(screen=None):
     xmlLoader = HeurekaXMLLoader()
-    model = DataModel(xmlLoader)
+    orderLoader = EshopRychleOrdersLoader()
+    model = DataModel(xmlLoader, orderLoader)
     scenes = [
         Scene([MainMenuView(screen, None)], -1, name="MainMenu"),
+        Scene([LoadOrdersView(screen, model)], -1, name="LoadOrders"),
+        Scene([ProcessOrdersView(screen, model)], -1, name="ProcessOrders"),
         Scene([StockView(screen, model)], -1, name="StockView"),
         Scene([AddStockView(screen, model)], -1, name="AddStock"),
         Scene([ReduceStockView(screen, model)], -1, name="ReduceStock"),
