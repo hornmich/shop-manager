@@ -641,7 +641,7 @@ class ProcessOrdersView(Frame):
         
     def _on_select(self):
         self.save()
-        self._model.orders.currentActionId = self.data['actions']
+        self._model.orders.currentOrderId = self.data['actions']
         self._scene.add_effect(PopUpDialog(self._screen, "Co se ma stat?.", ["Zauctovat", "Ignorovat", "Detaily", "Zpet"], self._on_action_selected, True, u'green'))
 
     def _on_action_selected(self, action):
@@ -656,12 +656,12 @@ class ProcessOrdersView(Frame):
 
     def _apply_all(self):
         self.save()
-        self._model.orders.currentActionId = None
+        self._model.orders.currentOrderId = None
         self._model.orders.apply_all()    
         self._scene.add_effect(PopUpDialog(self._screen, "Vsechy objednavky zauctovany.", ["OK"], None, True, u'green'))
 
     def _back(self):
         self.save()
-        self._model.orders.currentActionId = None
+        self._model.orders.currentOrderId = None
         raise NextScene("MainMenu")    
     

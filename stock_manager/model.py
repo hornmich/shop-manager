@@ -307,7 +307,7 @@ class HeurekaFeedModel():
         
 class EshopOrdersModel(object):
     def __init__(self, orderLoader):
-        self._currentActionId=None
+        self._currentOrderId=None
         self._orderLoader = orderLoader
         self._orders = []
         logging.basicConfig(filename='./app.log', filemode='w', level=logging.DEBUG, format='%(name)s - %(levelname)s - %(message)s')
@@ -331,8 +331,16 @@ class EshopOrdersModel(object):
     
     def apply_all(self):
         while len(self._actions) > 0:
-            self._currentActionId = self._actions[0][1]
+            self._currentOrderId = self._orders[0][1]
             self.apply_selected()
+    
+    @property
+    def currentOrderId(self):
+        return self._currentOrderId
+    
+    @currentOrderId.setter
+    def currentOrderId(self, cId):
+        self._currentOrderId=cId
 
 class DataModel():
     def __init__(self, feedLoader, orderLoader):
