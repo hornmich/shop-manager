@@ -118,7 +118,7 @@ class StockModel(object):
         '''
         self._currentId=None
         self._items=[
-            PieceModel("Plenky1", 20,
+            PieceModel("KIt and Kin, vel. 1, 5 ks 1, Newborn, 2-5kg", 20,
                        [ItemPurchase("2.3.2019", 60, 500, "Billa"), ItemPurchase("2.4.2019", 60, 150, "Tesco"), ItemPurchase("2.5.2019", 60, 300, "Kaufland")],
                        [ItemSale("2.3.2019", 5), ItemSale("3.3.2019", 5), ItemSale("4.3.2019", 5)],
                        [ItemReduce("2.3.2019", 1, "Duvod 1"), ItemReduce("3.3.2019", 1, "Duvod 2"), ItemReduce("4.3.2019", 1, "Duvod 3")]
