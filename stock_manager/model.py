@@ -35,6 +35,10 @@ class PieceModel():
     def reduce_item(self, count, reason):
         reduce = ItemReduce(datetime.today(), count, reason)
         self._reduces.append(reduce)
+    
+    def add_sale(self, date, pieces):
+        sale = ItemSale(date, pieces)
+        self._sales.append(sale)
       
 class ItemPurchase(object):
     '''
@@ -218,7 +222,16 @@ class StockModel(object):
         
         self._deleted.append(self._items[self.currentId])
         self._items.remove(self._items[self.currentId])
-    
+        
+    def add_sale(self, name, date, pieces):
+        for item in self._items:
+            logger.debug("Comparing item name %s AND %s", item._name, name)
+            if item._name == name:
+                item.add_sale(date, pieces)
+                return
+        logger.debug("Sale of %s not recorded, product not found", name)
+
+
     @property
     def currentId(self):
         return self._currentId
@@ -306,9 +319,10 @@ class HeurekaFeedModel():
         self._currentActionId=cId
         
 class EshopOrdersModel(object):
-    def __init__(self, orderLoader):
+    def __init__(self, orderLoader, stock):
         self._currentOrderId=None
         self._orderLoader = orderLoader
+        self._stock = stock
         self._orders = []
         logging.basicConfig(filename='./app.log', filemode='w', level=logging.DEBUG, format='%(name)s - %(levelname)s - %(message)s')
     
@@ -317,7 +331,7 @@ class EshopOrdersModel(object):
         shop_orders = self._orderLoader.get_orders(url=url) 
         index = 0
         for order in shop_orders:
-            current_order = ([order['id'], order['date'], order['state'], order['price']], index)
+            current_order = ([order['id'], order['date'], order['state'], order['price'], order['items']], index)
             self._orders.append(current_order)
       
     def get_orders(self):
@@ -331,9 +345,21 @@ class EshopOrdersModel(object):
             index = index+1
         return None
 
-    
     def apply_selected(self):
-        pass
+        if self._currentOrderId is None:
+            return
+        
+        idx = self._find_selected_order_index()
+        if idx is None:
+            return
+        
+        
+        logger.debug("Order: %s", str(self._orders[idx][0]))
+
+        date = self._orders[idx][0][1]
+        for sold_item in self._orders[idx][0][4]:
+            ''' TODO: count contains packages, not pieces. '''
+            self._stock.add_sale(sold_item['name'], date, sold_item['count'])
     
     def ignore_selected(self):
         if self._currentOrderId is None:
@@ -363,5 +389,5 @@ class DataModel():
         self.settings = SettingsModel()
         self.stock=StockModel()
         self.xmlFeed=HeurekaFeedModel(feedLoader, self.stock)
-        self.orders=EshopOrdersModel(orderLoader)
+        self.orders=EshopOrdersModel(orderLoader, self.stock)
         
