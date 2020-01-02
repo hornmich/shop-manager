@@ -322,13 +322,29 @@ class EshopOrdersModel(object):
       
     def get_orders(self):
         return self._orders
+
+    def _find_selected_order_index(self):
+        index = 0
+        for order in self._orders:
+            if order[1] is self._currentOrderId:
+                return index
+            index = index+1
+        return None
+
     
     def apply_selected(self):
         pass
     
     def ignore_selected(self):
-        pass
-    
+        if self._currentOrderId is None:
+            return
+        
+        idx = self._find_selected_order_index()
+        if idx is None:
+            return
+        
+        del(self._orders[idx])
+
     def apply_all(self):
         while len(self._actions) > 0:
             self._currentOrderId = self._orders[0][1]
