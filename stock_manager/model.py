@@ -8,6 +8,24 @@ from stock_manager.loaders import HeurekaXMLLoader
 import logging
 from asciimatics.screen import logger
 from cupshelpers.cupshelpers import activateNewPrinter
+import json
+
+def convert_to_dict(obj):
+    """
+    A function takes in a custom object and returns a dictionary representation of the object.
+    This dict representation includes meta data such as the object's module and class names.
+    """
+    
+    #  Populate the dictionary with object meta data 
+    obj_dict = {
+        "__class__": obj.__class__.__name__,
+        "__module__": obj.__module__
+    }
+    
+    #  Populate the dictionary with object properties
+    obj_dict.update(obj.__dict__)
+    
+    return obj_dict
 
 class PieceModel():
     '''
@@ -105,11 +123,15 @@ class SettingsModel():
         '''
         self._feedUrl = "http://somefeedurl.com"
         self._margin = 15
-        
+        self._db_path = "store_db.json"
         
     def get_settings(self):
-        return {"feedUrl": self._feedUrl, "margin": self._margin}
-
+        return {"feedUrl": self._feedUrl, "margin": self._margin, "db_path": self._db_path}
+    
+    def save_as_JSON(self, file_name):
+        with open(file_name, 'w') as file:
+            json.dump(convert_to_dict(self), file, sort_keys=True, indent=4)
+            
 class StockModel(object):
     '''
     classdocs
@@ -231,6 +253,9 @@ class StockModel(object):
                 return
         logger.debug("Sale of %s not recorded, product not found", name)
 
+    def save_as_JSON(self, file_name):
+        with open(file_name, 'w') as file:
+            json.dump(self, file, sort_keys=True, indent=4)
 
     @property
     def currentId(self):
@@ -390,3 +415,8 @@ class DataModel():
         self.xmlFeed=HeurekaFeedModel(feedLoader, self.stock)
         self.orders=EshopOrdersModel(orderLoader, self.stock)
         
+    def save_settings(self):
+        self.settings.save_as_JSON('settings.json')
+        
+    def load_settings(self):
+        pass

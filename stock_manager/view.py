@@ -5,7 +5,7 @@ Created on 27. 11. 2019
 '''
 
 from asciimatics.widgets import Frame, Button, Layout, MultiColumnListBox, Widget, Divider, Text, Label, CheckBox, PopUpDialog, ListBox
-from asciimatics.exceptions import NextScene
+from asciimatics.exceptions import NextScene, StopApplication
 
 
 class MainMenuView(Frame):
@@ -34,7 +34,7 @@ class MainMenuView(Frame):
         layout.add_widget(Button("Import dat z e-shopu ", self._importFromShop))
         layout.add_widget(Button("Započíst objednávku  ", self._acountOrder))
         layout.add_widget(Button("Nastaveni            ", self._settings))
-        layout.add_widget(Button("Konec                ", None))
+        layout.add_widget(Button("Konec                ", self._exit))
         """self._screen.add_effect(Clock(screen, 10, 10, 5))"""
 
         self.fix()
@@ -55,6 +55,10 @@ class MainMenuView(Frame):
     
     def _settings(self):
         raise NextScene("SettingsView")
+    
+    def _exit(self):
+        self._model.save_settings()
+        raise StopApplication('Success')
 
 class StockView(Frame):
     '''
