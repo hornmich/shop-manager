@@ -7,8 +7,7 @@ Created on 2. 12. 2019
 import xmltodict
 import urllib
 import html
-from copyreg import constructor
-
+import re
 
 class HeurekaXMLLoader(object):
     '''
@@ -79,10 +78,14 @@ class EshopRychleOrdersLoader(object):
             cnt=int(xml_product['pieces'])
             price=int(xml_product['price'])
             prod_name=html.unescape(xml_product['name'])
-            #index = re.search("[0-9]\ *ks", html.unescape(xml_product['name']))
-            #prod=xml_product['name'][:index.end()]
+            index = re.search(",\ *([0-9]+)\ *ks", html.unescape(xml_product['name']))
+            if index == None:
+                pieces = 1
+            else:
+                pieces=int(index.group(1))
+            
             if (prod_name != ''):
-                products.append({'name': prod_name, 'count': cnt, 'price': price})                
+                products.append({'name': prod_name, 'pieces': pieces, 'count': cnt, 'price': price})                
             else:
                 ''' invalid name of product '''
                 pass

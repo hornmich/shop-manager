@@ -358,8 +358,7 @@ class EshopOrdersModel(object):
 
         date = self._orders[idx][0][1]
         for sold_item in self._orders[idx][0][4]:
-            ''' TODO: count contains packages, not pieces. '''
-            self._stock.add_sale(sold_item['name'], date, sold_item['count'])
+            self._stock.add_sale(sold_item['name'], date, sold_item['count']*sold_item['pieces'])
     
     def ignore_selected(self):
         if self._currentOrderId is None:
