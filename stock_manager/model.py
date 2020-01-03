@@ -3,12 +3,14 @@ Created on 27. 11. 2019
 
 @author: michal
 '''
+import importlib
 from _datetime import datetime
 from stock_manager.loaders import HeurekaXMLLoader
 import logging
 from asciimatics.screen import logger
 from cupshelpers.cupshelpers import activateNewPrinter
 import json
+from mimetypes import _db
 
 def convert_to_dict(obj):
     """
@@ -26,6 +28,31 @@ def convert_to_dict(obj):
     obj_dict.update(obj.__dict__)
     
     return obj_dict
+
+def dict_to_obj(our_dict):
+    """
+    Function that takes in a dict and returns a custom object associated with the dict.
+    This function makes use of the "__module__" and "__class__" metadata in the dictionary
+    to know which object type to create.
+    """
+    if "__class__" in our_dict:
+        # Pop ensures we remove metadata from the dict to leave only the instance arguments
+        class_name = our_dict.pop("__class__")
+        
+        # Get the module name from the dict and import it
+        module_name = our_dict.pop("__module__")
+        
+        # We use the built in __import__ function since the module name is not yet known at runtime
+        module =  importlib.import_module(module_name)
+        
+        # Get the class from the module
+        class_ = getattr(module,class_name)
+        
+        # Use dictionary unpacking to initialize the object
+        obj = class_(**our_dict)
+    else:
+        obj = our_dict
+    return obj
 
 class PieceModel():
     '''
@@ -117,13 +144,13 @@ class SettingsModel():
     classdocs
     '''
 
-    def __init__(self):
+    def __init__(self, _feedUrl="http://somefeedurl.com", _margin=15, _db_path="store_db.json"):
         '''
         Constructor
         '''
-        self._feedUrl = "http://somefeedurl.com"
-        self._margin = 15
-        self._db_path = "store_db.json"
+        self._feedUrl = _feedUrl
+        self._margin = _margin
+        self._db_path = _db_path
         
     def get_settings(self):
         return {"feedUrl": self._feedUrl, "margin": self._margin, "db_path": self._db_path}
@@ -132,6 +159,7 @@ class SettingsModel():
         with open(file_name, 'w') as file:
             json.dump(convert_to_dict(self), file, sort_keys=True, indent=4)
             
+           
 class StockModel(object):
     '''
     classdocs
@@ -410,7 +438,7 @@ class EshopOrdersModel(object):
 
 class DataModel():
     def __init__(self, feedLoader, orderLoader):
-        self.settings = SettingsModel()
+        self.settings = self.load_settings_from_JSON('settings.json')
         self.stock=StockModel()
         self.xmlFeed=HeurekaFeedModel(feedLoader, self.stock)
         self.orders=EshopOrdersModel(orderLoader, self.stock)
@@ -418,5 +446,6 @@ class DataModel():
     def save_settings(self):
         self.settings.save_as_JSON('settings.json')
         
-    def load_settings(self):
-        pass
+    def load_settings_from_JSON(self, file_name):
+        with open(file_name, 'r') as file:
+            return dict_to_obj(json.load(file))
