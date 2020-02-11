@@ -6,6 +6,7 @@ Created on 27. 11. 2019
 
 from asciimatics.widgets import Frame, Button, Layout, MultiColumnListBox, Widget, Divider, Text, Label, CheckBox, PopUpDialog, ListBox
 from asciimatics.exceptions import NextScene, StopApplication
+from stock_manager.model import SettingsModel
 
 
 class MainMenuView(Frame):
@@ -59,6 +60,47 @@ class MainMenuView(Frame):
     def _exit(self):
         self._model.save_settings()
         raise StopApplication('Success')
+
+class SettingsView(Frame):
+    def __init__(self, screen, model):
+        super(SettingsView, self).__init__(screen,
+                                          6,
+                                          60,
+                                          hover_focus=True,
+                                          can_scroll=False,
+                                          title="Nastaveni",
+                                          reduce_cpu=True)
+        # Save off the model that accesses the contacts database.
+        self._model = model
+
+        # Create the form for displaying the list of contacts.
+        layout = Layout([100], fill_frame=True)
+        self.add_layout(layout)
+        layout.add_widget(Text("Heureka Feer URL:", "feedUrl"))
+        layout.add_widget(Text("Cesta k databazi:", "dbPath"))
+        layout.add_widget(Text("Marze:", "margin"))
+        layout.add_widget(Divider())
+        layout2 = Layout([1, 1])
+        self.add_layout(layout2)
+        layout2.add_widget(Button("OK", self._ok), 0)
+        layout2.add_widget(Button("Cancel", self._cancel), 1)
+        self.fix()
+
+    def reset(self):
+        # Do standard reset to clear out form, then populate with new data.
+        super(SettingsView, self).reset()
+        self.data=self._model.settings.get_settings()
+        # self.data = self._model.get_current_item()
+
+    def _ok(self):
+        self.save()
+        self._model.settings = SettingsModel(feedUrl=self.data['feedUrl'], margin=self.data['margin'], dbPath=self.data['dbPath'])
+        self._model.save_settings()
+        raise NextScene("MainMenu")
+
+    @staticmethod
+    def _cancel():
+        raise NextScene("MainMenu")
 
 class StockView(Frame):
     '''

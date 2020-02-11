@@ -144,16 +144,16 @@ class SettingsModel():
     classdocs
     '''
 
-    def __init__(self, _feedUrl="http://somefeedurl.com", _margin=15, _db_path="store_db.json"):
+    def __init__(self, feedUrl="http://somefeedurl.com", margin=15, dbPath="store_db.json"):
         '''
         Constructor
         '''
-        self._feedUrl = _feedUrl
-        self._margin = _margin
-        self._db_path = _db_path
+        self.feedUrl = feedUrl
+        self.margin = margin
+        self.dbPath = dbPath
         
     def get_settings(self):
-        return {"feedUrl": self._feedUrl, "margin": self._margin, "db_path": self._db_path}
+        return {"feedUrl": self.feedUrl, "margin": str(self.margin), "dbPath": self.dbPath}
     
     def save_as_JSON(self, file_name):
         with open(file_name, 'w') as file:
@@ -438,7 +438,10 @@ class EshopOrdersModel(object):
 
 class DataModel():
     def __init__(self, feedLoader, orderLoader):
-        self.settings = self.load_settings_from_JSON('settings.json')
+        try: 
+            self.settings = self.load_settings_from_JSON('settings.json')
+        except:
+            self.settings = SettingsModel(feedUrl="missing", margin=None, dbPath="missing")
         self.stock=StockModel()
         self.xmlFeed=HeurekaFeedModel(feedLoader, self.stock)
         self.orders=EshopOrdersModel(orderLoader, self.stock)

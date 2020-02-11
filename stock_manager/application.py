@@ -7,7 +7,7 @@ Created on 13. 10. 2019
 from asciimatics.screen import ManagedScreen
 from asciimatics.scene import Scene
 
-from stock_manager.view import MainMenuView, StockView, AddStockView, ReduceStockView, ProductsDetailsView, PurchaseHistoryView, SellHistoryView, ReduceHistoryView, LoadFeedView, ProcessXMLFeedView, LoadOrdersView, ProcessOrdersView 
+from stock_manager.view import MainMenuView, StockView, AddStockView, ReduceStockView, ProductsDetailsView, PurchaseHistoryView, SellHistoryView, ReduceHistoryView, LoadFeedView, ProcessXMLFeedView, LoadOrdersView, ProcessOrdersView, SettingsView 
 from stock_manager.model import DataModel
 
 
@@ -36,6 +36,7 @@ def demo(screen=None):
     model = DataModel(xmlLoader, orderLoader)
     scenes = [
         Scene([MainMenuView(screen, model)], -1, name="MainMenu"),
+        Scene([SettingsView(screen, model)], -1, name="SettingsView"),
         Scene([LoadOrdersView(screen, model)], -1, name="LoadOrders"),
         Scene([ProcessOrdersView(screen, model)], -1, name="ProcessOrders"),
         Scene([StockView(screen, model)], -1, name="StockView"),
