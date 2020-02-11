@@ -1,0 +1,7 @@
+{
+    "__class__": "SettingsModel",
+    "__module__": "stock_manager.model",
+    "dbPath": "missing",
+    "feedUrl": "missing",
+    "margin": "None"
+}
