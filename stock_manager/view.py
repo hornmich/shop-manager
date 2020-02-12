@@ -692,7 +692,10 @@ class ProcessOrdersView(Frame):
 
     def _on_action_selected(self, action):
         if action == 0:
-            self._model.orders.apply_selected()
+            try:
+                self._model.orders.apply_selected()
+            except Exception as exc: 
+                self._scene.add_effect(PopUpDialog(self._screen, str(exc), ["OK"], None, True, u'warning'))
             self._reload_list()
         elif action == 1:
             self._model.orders.ignore_selected()

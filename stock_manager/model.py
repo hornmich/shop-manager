@@ -280,6 +280,7 @@ class StockModel(object):
                 item.add_sale(date, pieces)
                 return
         logger.debug("Sale of %s not recorded, product not found", name)
+        raise Exception("Sale of " + name + " not recorded, product not found")
 
     def save_as_JSON(self, file_name):
         with open(file_name, 'w') as file:
@@ -411,8 +412,18 @@ class EshopOrdersModel(object):
         logger.debug("Order: %s", str(self._orders[idx][0]))
 
         date = self._orders[idx][0][1]
+        misses = []
         for sold_item in self._orders[idx][0][4]:
-            self._stock.add_sale(sold_item['name'], date, sold_item['count']*sold_item['pieces'])
+            try:
+                self._stock.add_sale(sold_item['name'], date, sold_item['count']*sold_item['pieces'])
+            except:
+                misses.append(sold_item['name'])
+                
+        if len(misses) > 0:
+            msg='Tyto produkty nejsou v databazi:\n'
+            for missing in misses:
+                msg = msg+'-'+missing+'\n'
+            raise Exception(msg)
     
     def ignore_selected(self):
         if self._currentOrderId is None:
