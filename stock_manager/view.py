@@ -674,7 +674,7 @@ class ProcessOrdersView(Frame):
             on_select=self._on_select)
         layout.add_widget(self._list_view)
         layout.add_widget(Divider())
-        layout2 = Layout([1, 1, 1])
+        layout2 = Layout([1, 1])
         self.add_layout(layout2)
         layout2.add_widget(Button("Zauctovat vse", self._apply_all), 0)
         layout2.add_widget(Button("Zpět", self._back), 1)
