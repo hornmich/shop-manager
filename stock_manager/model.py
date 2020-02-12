@@ -385,6 +385,7 @@ class EshopOrdersModel(object):
         index = 0
         for order in shop_orders:
             current_order = ([order['id'], order['date'], order['state'], order['price'], order['items']], index)
+            index = index + 1
             self._orders.append(current_order)
       
     def get_orders(self):
