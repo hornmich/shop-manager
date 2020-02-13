@@ -200,6 +200,47 @@ class StockView(Frame):
         self._model.currentId = None
         raise NextScene("MainMenu")            
 
+class EditItemView(Frame):
+    def __init__(self, screen, model):
+        super(EditItemView, self).__init__(screen,
+                                          7,
+                                          60,
+                                          hover_focus=True,
+                                          can_scroll=False,
+                                          title="Editovat zbozi",
+                                          reduce_cpu=True)
+        # Save off the model that accesses the contacts database.
+        self._model = model
+
+        # Create the form for displaying the list of contacts.
+        layout = Layout([100], fill_frame=True)
+        self.add_layout(layout)
+        layout.add_widget(Text("Nazev:", "name"))
+        layout.add_widget(Text("Cena:", "price"))
+        layout.add_widget(Divider())
+        layout2 = Layout([1, 1])
+        self.add_layout(layout2)
+        layout2.add_widget(Button("OK", self._ok), 0)
+        layout2.add_widget(Button("Cancel", self._cancel), 1)
+        self.fix()
+
+    def reset(self):
+        # Do standard reset to clear out form, then populate with new data.
+        super(EditItemView, self).reset()
+        self.data = self._model.stock.get_current_item_attributes()
+
+    def _ok(self):
+        self.save()
+        try:
+            self._model.stock.update_current_item(self.data['name'], self.data['price'])
+        except Exception as ex:
+            self._scene.add_effect(PopUpDialog(self._screen, "Chyba: "+str(ex), ["OK"], None, True, u'warning'))
+        raise NextScene("StockView")
+
+    @staticmethod
+    def _cancel():
+        raise NextScene("StockView")
+
 class AddStockView(Frame):
     def __init__(self, screen, model):
         super(AddStockView, self).__init__(screen,

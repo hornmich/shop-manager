@@ -287,6 +287,24 @@ class StockModel(object):
         self._deleted.append(self._items[self.currentId])
         self._items.remove(self._items[self.currentId])
         
+    def update_current_item(self, name, price):
+        if self.currentId is None:
+            return
+        
+        try:
+            price = int(price)
+        except:
+            raise Exception("Cena " + price + " neni cislo.")
+        
+        self._items[self.currentId]._name = name
+        self._items[self.currentId]._price = price   
+        
+    def get_current_item_attributes(self):
+        if self.currentId is None:
+            return {'name': "N/A", 'price': "N/A"} 
+                
+        return {'name': self._items[self.currentId]._name, 'price': str(self._items[self.currentId]._price)}
+    
     def add_sale(self, name, date, pieces):
         for item in self._items:
             logger.debug("Comparing item name %s AND %s", item._name, name)
