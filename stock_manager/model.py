@@ -191,14 +191,28 @@ class StockModel(object):
         
         self._deleted=[]
         
+    def _calculate_item_pieces(self, item):
+        if item == None:
+            return 0
+        
+        pieces = 0
+        for purchase in item._purchases:
+            pieces = pieces + purchase._pieces
+        for reduce in item._reduces:
+            pieces = pieces - reduce._pieces
+        for sale in item._sales:
+            pieces = pieces - sale._pieces
+            
+        return pieces
+    
     def get_stock_summary(self):
         summary = []
         i = 0
         for item in self._items:
-            rec = (item._name, i)
-            summary.append(rec)
+            pieces = self._calculate_item_pieces(item)
+            rec = ([item._name, str(pieces)], i)
             i = i+1
-            
+            summary.append(rec)
         return summary
     
     def get_products_names(self):

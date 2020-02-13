@@ -124,9 +124,11 @@ class StockView(Frame):
         # Create the form for displaying the list of contacts.
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
-        self._list_view = ListBox(
-            Widget.FILL_FRAME,
-            model.stock.get_stock_summary(),
+        self._list_view = MultiColumnListBox(
+            height=Widget.FILL_FRAME,
+            options=model.stock.get_stock_summary(), 
+            columns=("50%", "50%"),
+            titles=("Nazev", "Sklad [ks]"),
             name="products",
             add_scroll_bar=True,
             on_change=None,
