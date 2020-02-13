@@ -112,19 +112,14 @@ class StockView(Frame):
         Constructor
         '''
         super(StockView, self).__init__(screen,
-                                          screen.height * 2 // 3,
-                                          screen.width * 2 // 3,
+                                          screen.height,
+                                          screen.width,
                                           hover_focus=True,
                                           can_scroll=False,
-                                          title="Stock View",
+                                          title="Vypis skladu",
                                           reduce_cpu=True)
         # Save off the model that accesses the contacts database.
         self._model = model
-        self._delete_btn = Button("Smazat", self._delete)
-        self._add_btn = Button("Zadat", self._add)
-        self._account_btn = Button("Odepsat", self._account)
-        self._details_btn = Button("Detaily", self._details)
-
 
         # Create the form for displaying the list of contacts.
         layout = Layout([100], fill_frame=True)
@@ -134,20 +129,15 @@ class StockView(Frame):
             model.stock.get_stock_summary(),
             name="products",
             add_scroll_bar=True,
-            on_change=self._on_pick,
-            on_select=self._details)
+            on_change=None,
+            on_select=self._on_select)
         layout.add_widget(self._list_view)
         layout.add_widget(Divider())
-        layout2 = Layout([1, 1, 1, 1, 1])
+        layout2 = Layout([1])
         self.add_layout(layout2)
-        layout2.add_widget(self._details_btn, 0)
-        layout2.add_widget(self._add_btn, 1)
-        layout2.add_widget(self._account_btn, 2)
-        layout2.add_widget(self._delete_btn, 3)
-        layout2.add_widget(Button("Zpět", self._back), 4)
+        layout2.add_widget(Button("Zpět", self._back))
 
         self.fix()
-        self._on_pick()
         self.reset()
 
     def reset(self):
@@ -155,29 +145,42 @@ class StockView(Frame):
         super(StockView, self).reset()
         self._reload_list()
 
-    def _on_pick(self):
-        self._delete_btn.disabled = self._list_view.value is None
-        self._add_btn.disabled = self._list_view.value is None
-        self._account_btn.disabled = self._list_view.value is None
-        self._details_btn.disabled = self._list_view.value is None
+    def _on_select(self):
+        self.save()
+        self._model.stock.currentId = self.data['products']
+        self._scene.add_effect(PopUpDialog(self._screen, "Co se ma stat?.", ["Historie", "Nakup", "Odpis", "Upravit", "Smazat", "Zpet"], self._on_action_selected, True, u'green'))
+        
+    def _on_action_selected(self, action):
+        if action == 0:
+            self._scene.add_effect(PopUpDialog(self._screen, "Historie.", ["Nakupy", "Prodeje", "Odpisy", "Zpet"], self._on_history_selected, True, u'green'))
+        elif action == 1:
+            raise NextScene("AddStock")
+        elif action == 2:
+            raise NextScene("ReduceStock")
+        elif action == 3:
+            raise NextScene("EditItem")        
+        elif action == 4:
+            self._scene.add_effect(PopUpDialog(self._screen, "Opravdu smazat?.", ["Ano", "Ne"], self._delete_on_close, True, u'warning'))
+        else :
+            return
+
+    def _on_history_selected(self, action):
+        if action == 0:
+            raise NextScene("PurchaseHistory")
+        elif action == 1:
+            raise NextScene("SellHistory")
+        elif action == 2:
+            raise NextScene("ReduceHistory")
+        else :
+            return
 
     def _reload_list(self, new_value=None):
         self._list_view.options = self._model.stock.get_stock_summary()
         self._list_view.value = new_value
 
-    def _add(self):
-        self.save()
-        self._model.stock.currentId = self.data["products"]
-        raise NextScene("AddStock")
-
-    def _account(self):
-        self.save()
-        self._model.stock.currentId = self.data["products"]
-        raise NextScene("ReduceStock")
-   
     def _details(self):
         self.save()
-        self._model.currentId = None
+        #self._model.currentId = None
         raise NextScene("ProductsDetails")
     
     def _delete(self):
@@ -272,78 +275,6 @@ class ReduceStockView(Frame):
     def _cancel():
         raise NextScene("StockView")
 
-class ProductsDetailsView(Frame):
-    def __init__(self, screen, model):
-        super(ProductsDetailsView, self).__init__(screen,
-                                          screen.height,
-                                          screen.width,
-                                          hover_focus=True,
-                                          can_scroll=False,
-                                          title="Detaily produktu",
-                                          reduce_cpu=True)
-        # Save off the model that accesses the contacts database.
-        self._model = model
-        self._purchase_history_btn = Button("Historie nákupů", self._purchase_history)
-        self._sell_history_btn = Button("Historie prodejů", self._sell_history)
-        self._reduce_history_btn = Button("Historie odpisů", self._reduce_history)
-
-        # Create the form for displaying the list of contacts.
-        layout = Layout([100], fill_frame=True)
-        self.add_layout(layout)
-        self._list_view = ListBox(
-            Widget.FILL_FRAME,
-            model.stock.get_stock_summary(),
-            name="products",
-            add_scroll_bar=True,
-            on_change=self._on_pick,
-            on_select=None)
-        layout.add_widget(self._list_view)
-        layout.add_widget(Divider())
-        layout2 = Layout([1, 1, 1, 1])
-        self.add_layout(layout2)
-        layout2.add_widget(self._purchase_history_btn ,0)
-        layout2.add_widget(self._sell_history_btn, 1)
-        layout2.add_widget(self._reduce_history_btn, 2)
-        layout2.add_widget(Button("Zpět", self._back), 3)
-
-        self.fix()
-        self._reload_list()
-        self._on_pick()
-
-    def reset(self):
-        # Do standard reset to clear out form, then populate with new data.
-        super(ProductsDetailsView, self).reset()
-        #self.data = self._model.stock.get_stock_summary()
-
-    def _on_pick(self):
-        self._purchase_history_btn.disabled = self._list_view.value is None
-        self._sell_history_btn.disabled = self._list_view.value is None
-        self._reduce_history_btn.disabled = self._list_view.value is None
-
-    def _reload_list(self, new_value=None):
-        self._list_view.options = self._model.stock.get_stock_summary()
-        self._list_view.value = new_value
-
-    def _purchase_history(self):
-        self.save()
-        self._model.stock.currentId = self.data["products"]
-        raise NextScene("PurchaseHistory")
-
-    def _sell_history(self):
-        self.save()
-        self._model.stock.currentId = self.data["products"]
-        raise NextScene("SellHistory")
-   
-    def _reduce_history(self):
-        self.save()
-        self._model.stock.currentId = self.data["products"]
-        raise NextScene("ReduceHistory")
-        
-    def _back(self):
-        self.save()
-        self._model.stock.currentId = None
-        raise NextScene("MainMenu")
-    
 class PurchaseHistoryView(Frame):
     def __init__(self, screen, model):
         super(PurchaseHistoryView, self).__init__(screen,
@@ -389,7 +320,7 @@ class PurchaseHistoryView(Frame):
     def _back(self):
         self.save()
         self._model.currentId = None
-        raise NextScene("ProductsDetails")
+        raise NextScene("StockView")
   
 class ReduceHistoryView(Frame):
     def __init__(self, screen, model):
@@ -431,7 +362,7 @@ class ReduceHistoryView(Frame):
     def _back(self):
         self.save()
         self._model.currentId = None
-        raise NextScene("ProductsDetails")
+        raise NextScene("StockView")
 
 class SellHistoryView(Frame):
     def __init__(self, screen, model):
@@ -473,7 +404,7 @@ class SellHistoryView(Frame):
     def _back(self):
         self.save()
         self._model.currentId = None
-        raise NextScene("ProductsDetails")
+        raise NextScene("StockView")
     
 class LoadFeedView(Frame):
     '''
